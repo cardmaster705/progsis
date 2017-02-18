@@ -12,6 +12,7 @@ public class practica1 {
 		Archivo uno= new Archivo();
 		String texto=uno.leerArchivos();
 		uno.acomodo(texto);
+	
 	}
 
 }
