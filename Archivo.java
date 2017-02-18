@@ -43,6 +43,9 @@ public void acomodo(String cadenan){
 	int [] tamaño;
 	tamaño = new int[12];
 	for(i=0;i<arreglo.length;i++){
+		ETIQUETA="";
+		CODOP="";
+		OPERANDO="";
 		tamaño[i]=arreglo[i].length();
 		int j=0;
 		if(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t'){
@@ -59,7 +62,7 @@ public void acomodo(String cadenan){
 			
 			else if(arreglo[i].charAt(j)!=';'){
 				do{
-				CODOP=""+(arreglo[i].charAt(j));
+				CODOP=CODOP+arreglo[i].charAt(j);
 				j++;
 			}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t')&&j<=tamaño[i]);
 				codigoReglas(CODOP);
@@ -73,7 +76,7 @@ public void acomodo(String cadenan){
 			}
 			else if(arreglo[i].charAt(j)!=';'){
 				do{
-					OPERANDO=""+(arreglo[i].charAt(j));
+					OPERANDO=OPERANDO+arreglo[i].charAt(j);
 					j++;
 				}while(j<tamaño[i]);
 				operandoReglas(OPERANDO);
@@ -88,7 +91,7 @@ public void acomodo(String cadenan){
 		}//final else if
 		else{
 			do{
-				ETIQUETA=""+arreglo[i].charAt(j);
+				ETIQUETA=ETIQUETA+arreglo[i].charAt(j);
 				j++;
 			}while(arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t');
 			etiquetaReglas(ETIQUETA);
@@ -101,7 +104,7 @@ public void acomodo(String cadenan){
 				}//fin del if
 				else if(arreglo[i].charAt(j)!=';'){
 					do{
-						CODOP=""+arreglo[i].charAt(j);
+						CODOP=CODOP+arreglo[i].charAt(j);
 						j++;
 					}while(j<tamaño[i]);
 					codigoReglas(CODOP);
@@ -114,7 +117,7 @@ public void acomodo(String cadenan){
 				}//fin del if
 				else if(arreglo[i].charAt(j)!=';'){
 					do{
-						OPERANDO=""+arreglo[i].charAt(j);
+						OPERANDO=OPERANDO+arreglo[i].charAt(j);
 						j++;
 					}while(j<tamaño[i]);
 					operandoReglas(OPERANDO);
