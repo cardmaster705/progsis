@@ -12,7 +12,7 @@ public class Archivo {
 	String ETIQUETA="";
 	String CODOP="";
 	String OPERANDO="";
-	int tamaño=0;
+	
 	String nueva;
 	public String leerArchivos(){
 		
@@ -40,22 +40,25 @@ public void acomodo(String cadenan){
 	String arreglo[]=texto.split("\n");
 	
 	int i;
-	int [] tamaño;
-	tamaño = new int[12];
-	for(i=0;i<arreglo.length;i++){
+	
+	for(i=0;i<=arreglo.length;i++){
+		int [] tamaño;
+		tamaño = new int[12];
+		
 		ETIQUETA="";
 		CODOP="";
 		OPERANDO="";
-		tamaño[i]=arreglo[i].length();
+		
 		int j=0;
+		tamaño[i]=arreglo[i].length();
 		if(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t'){
-			
+				System.out.println("ETIQUETA: NULL");
 			//ignora los espacios en blanco
-			do{
+			do{//COMENTARIO,CODIGO DE OPERACION, OPERANDO
 				
 				j++;
-			}while((arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t')&&j<=tamaño[i]);
-			if(j<tamaño[i]){
+			}while((arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t')&&j<arreglo[i].length());
+			if(j<arreglo[i].length()){
 				if(arreglo[i].charAt(j)==';'){
 					System.out.println("COMENTARIO");
 				}
@@ -64,21 +67,22 @@ public void acomodo(String cadenan){
 				do{
 				CODOP=CODOP+arreglo[i].charAt(j);
 				j++;
-			}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t')&&j<=tamaño[i]);
+			}while(arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t');
 				codigoReglas(CODOP);
 				
-			if(j<=tamaño[i]){
-				while(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t'){
+			if(j<arreglo[i].length()){
+				
+				while((arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t')&&j<=arreglo[i].length()){
+					
 					j++;
 				}
-			if(arreglo[i].charAt(j)==';'){
-				System.out.println("COMENTARIO");
-			}
-			else if(arreglo[i].charAt(j)!=';'){
+				
+				if(arreglo[i].charAt(j)!=';'){
 				do{
 					OPERANDO=OPERANDO+arreglo[i].charAt(j);
+					
 					j++;
-				}while(j<tamaño[i]);
+				}while(j<arreglo[i].length());
 				operandoReglas(OPERANDO);
 						}//final del elseif
 					}//final if	
@@ -86,16 +90,23 @@ public void acomodo(String cadenan){
 			}//final del if
 		}//final del if
 		
+		
+		
 		else if(arreglo[i].charAt(j)==';'){
 			System.out.println("COMENTARIO");
 		}//final else if
-		else{
-			do{
+		else if(j==arreglo[i].length()){
+			System.out.println("null");
+			
+		}
+		
+		else {
+			do{//COMENTARIO,ETIQUETA,CODIGO DE OPERACION, OPERANDO
 				ETIQUETA=ETIQUETA+arreglo[i].charAt(j);
 				j++;
-			}while(arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t');
+			}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t')&&j<=arreglo[i].length());
 			etiquetaReglas(ETIQUETA);
-			if(j<tamaño[i]){
+			if(j<arreglo[i].length()){
 				while(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t'){
 					j++;
 				}
@@ -106,22 +117,24 @@ public void acomodo(String cadenan){
 					do{
 						CODOP=CODOP+arreglo[i].charAt(j);
 						j++;
-					}while(j<tamaño[i]);
+					}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t')&&j<=arreglo[i].length());
 					codigoReglas(CODOP);
-				if(j<tamaño[i]){
-				while(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t'){
+				if(j<arreglo[i].length()){
+				while((arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t')&&j<arreglo[i].length()){
 					j++;
+					if(j==arreglo[i].length()){
+						System.out.println("OPERANDO: NULL");
+					}else if(arreglo[i].charAt(j)!=';'){
+						do{
+							OPERANDO=OPERANDO+arreglo[i].charAt(j);
+							j++;
+						}while(j<arreglo[i].length());
+						operandoReglas(OPERANDO);
+					}
 				}
-				if(arreglo[i].charAt(j)==';'){
-					System.out.println("COMENTARIO");
-				}//fin del if
-				else if(arreglo[i].charAt(j)!=';'){
-					do{
-						OPERANDO=OPERANDO+arreglo[i].charAt(j);
-						j++;
-					}while(j<tamaño[i]);
-					operandoReglas(OPERANDO);
-				}//fin del else if
+				
+				
+				//fin del else if
 			}//fin del if
 		}//fin del else if
 	}
@@ -186,14 +199,14 @@ void codigoReglas(String op){
         System.out.println("error el tamaño maximo es de 5 elementos");
     }//end else
 }
-void operandoReglas(String op){
-System.out.println("OPERANDO: "+op);
+void operandoReglas(String ope){
+System.out.println("OPERANDO: "+ope);
 	
 }
 void etiquetaReglas(String lab){
 	System.out.println("ETIQUETA: "+lab);
 	int n=lab.length();
-	if(n<8){
+	if(n<=8){
 		int i=0;
 		int estado=0;
 		while(i<n&&estado!=error){
