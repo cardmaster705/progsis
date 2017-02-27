@@ -14,6 +14,7 @@ public class Archivo {
 	String OPERANDO="";
 	String lista="";
 	String nueva;
+	String modoDir="";
 	public String leerArchivos(){
 		
 		JFileChooser buscador= new JFileChooser();
@@ -161,6 +162,7 @@ public void acomodo(String cadenan){
 		}//fin del else if
 	}
 }
+		
 }//final del ciclo for
 }//final del metodo
 
@@ -171,7 +173,10 @@ public void acomodo(String cadenan){
 
 void codigoReglas(String op){
 	int n=op.length();
-  System.out.println("CODOP :"+op);
+	modoDir=buscarLista(lista);
+  System.out.println("CODOP :"+op+"-->"+modoDir);
+	
+	
     if ( n <= 5)
     {
         int i=0;
@@ -222,8 +227,12 @@ void codigoReglas(String op){
     }//end else
 }
 void operandoReglas(String ope){
-System.out.println("OPERANDO: "+ope);
-	
+
+	if(ope.equals("	")){
+		System.out.println("OPERANDO: NULL");
+	}else{
+		System.out.println("OPERANDO: "+ope);
+	}
 }
 void etiquetaReglas(String lab){
 	System.out.println("ETIQUETA: "+lab);
@@ -265,25 +274,26 @@ else
 		
 	
 }
-public void buscarLista(String listas){
+public String buscarLista(String listas){
+	String s="";
 String list[]=lista.split("\n");
 
 for(int i=0;i<list.length;i++){
 	String split[]=list[i].split("\t");
-	for(int j=0;j<split.length;j++){
-	if(CODOP.equals(split[j])){
-		System.out.println("funciono");
-	}
+	if(CODOP.equals(split[0])){
+		s+=split[2]+" ";
 	}
 	
 
 
 	
 }
+if(s.equals("")){
+	s="error";
 }
-}			
-			
-		
+return s;
+}
+}
 		
 	
 
