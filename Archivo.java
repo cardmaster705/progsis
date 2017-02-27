@@ -267,13 +267,21 @@ else
 }
 public void buscarLista(String listas){
 String list[]=lista.split("\n");
+
 for(int i=0;i<list.length;i++){
-	System.out.println(list[i]);
-}
+	String split[]=list[i].split("\t");
+	for(int j=0;j<split.length;j++){
+	if(CODOP.equals(split[j])){
+		System.out.println("funciono");
+	}
+	}
+	
+
+
 	
 }
 }
-			
+}			
 			
 		
 		
