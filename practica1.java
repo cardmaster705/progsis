@@ -11,8 +11,9 @@ public class practica1 {
 		// TODO Auto-generated method stub
 		Archivo uno= new Archivo();
 		String texto=uno.leerArchivos();
+		String lista=uno.leerLista();
 		uno.acomodo(texto);
-	
+		uno.buscarLista(lista);
 	}
 
 }

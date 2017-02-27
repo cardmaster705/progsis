@@ -12,7 +12,7 @@ public class Archivo {
 	String ETIQUETA="";
 	String CODOP="";
 	String OPERANDO="";
-	
+	String lista="";
 	String nueva;
 	public String leerArchivos(){
 		
@@ -36,6 +36,29 @@ public class Archivo {
 		return texto;
 	
 		}
+public String leerLista(){
+		
+		JFileChooser buscador= new JFileChooser();
+		buscador.showOpenDialog(buscador);
+		try{
+			String patch= buscador.getSelectedFile().getAbsolutePath();
+			BufferedReader bf = new BufferedReader(new FileReader(patch));
+			String temp="";
+			String bfRead;
+			
+			while((bfRead= bf.readLine())!= null){
+				temp=temp+bfRead+"\n";
+				lista=temp;
+				
+			}
+			}catch(Exception e){
+		System.err.println("el archivo no ha sido encontrado");
+	}
+	
+		return lista;
+	
+		}
+
 public void acomodo(String cadenan){
 	String arreglo[]=texto.split("\n");
 	
@@ -116,6 +139,7 @@ public void acomodo(String cadenan){
 						j++;
 					}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t')&&j<=arreglo[i].length());
 					codigoReglas(CODOP);
+					
 				if(j<arreglo[i].length()){
 				while((arreglo[i].charAt(j)==' '&&arreglo[i].charAt(j)=='\t')&&j<=arreglo[i].length()){
 					j++;
@@ -239,6 +263,13 @@ else
     System.out.println("la etiqueta tiene mas de 8 caracteres");
 }//end else
 		
+	
+}
+public void buscarLista(String listas){
+String list[]=lista.split("\n");
+for(int i=0;i<list.length;i++){
+	System.out.println(list[i]);
+}
 	
 }
 }
