@@ -50,13 +50,13 @@ public void acomodo(String cadenan){
 		
 		int j=0;
 		//tamaño[i]=arreglo[i].length();
-		if(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)==9){
+		if(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t'){
 				System.out.println("ETIQUETA: NULL");
 			//ignora los espacios en blanco
 			do{//COMENTARIO,CODIGO DE OPERACION, OPERANDO
 				
 				j++;
-			}while((arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)==9)&&j<arreglo[i].length());
+			}while((arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t')&&j<arreglo[i].length());
 			if(j<arreglo[i].length()){
 				if(arreglo[i].charAt(j)==';'){
 					System.out.println("COMENTARIO");
@@ -66,17 +66,15 @@ public void acomodo(String cadenan){
 				do{
 				CODOP=CODOP+arreglo[i].charAt(j);
 				j++;
-			}while(arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!=9);
+			}while(arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t');
 				codigoReglas(CODOP);
 				
 			
 				
-				while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!=9)&&j<=arreglo[i].length()){
+				while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t')&&j<=arreglo[i].length()){
 					
 					j++;
-					if(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)==9){
-						System.out.println("OPERANDO: NULL");
-					}
+					
 				}
 				
 				if(arreglo[i].charAt(j)!=';'){
@@ -97,19 +95,16 @@ public void acomodo(String cadenan){
 		else if(arreglo[i].charAt(j)==';'){
 			System.out.println("COMENTARIO");
 		}//final else if
-		else if(j==arreglo[i].length()){
-			System.out.println("null");
-			
-		}
+		
 		
 		else {
 			do{//COMENTARIO,ETIQUETA,CODIGO DE OPERACION, OPERANDO
 				ETIQUETA=ETIQUETA+arreglo[i].charAt(j);
 				j++;
-			}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!=9)&&j<=arreglo[i].length());
+			}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t')&&j<=arreglo[i].length());
 			etiquetaReglas(ETIQUETA);
 			if(j<arreglo[i].length()){
-				while(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)==9){
+				while(arreglo[i].charAt(j)==' '||arreglo[i].charAt(j)=='\t'){
 					j++;
 				}
 				if(arreglo[i].charAt(j)==';'){
@@ -119,10 +114,10 @@ public void acomodo(String cadenan){
 					do{
 						CODOP=CODOP+arreglo[i].charAt(j);
 						j++;
-					}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!=9)&&j<=arreglo[i].length());
+					}while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!='\t')&&j<=arreglo[i].length());
 					codigoReglas(CODOP);
 				if(j<arreglo[i].length()){
-				while((arreglo[i].charAt(j)!=' '&&arreglo[i].charAt(j)!=9)&&j<=arreglo[i].length()){
+				while((arreglo[i].charAt(j)==' '&&arreglo[i].charAt(j)=='\t')&&j<=arreglo[i].length()){
 					j++;
 					
 				}
@@ -134,9 +129,6 @@ public void acomodo(String cadenan){
 					do{
 						OPERANDO=OPERANDO+arreglo[i].charAt(j);
 						j++;
-						if(j==arreglo[i].length()){
-							System.out.println("OPERANDO: NULL");
-						}
 					}while(j<arreglo[i].length());
 					operandoReglas(OPERANDO);
 				}//fin del else if
