@@ -31,6 +31,8 @@ public class Archivo {
 	private boolean ERRORmodoDirec = true;
 	private StringTokenizer st;
 	String bytes="";
+	String modoDirec = "";
+
 	public String leerArchivos(){
 		
 		JFileChooser buscador= new JFileChooser();
@@ -242,9 +244,10 @@ void codigoReglas(String op){
         System.out.println("error el tamaño maximo es de 5 elementos");
     }//end else
 }
+
 public String operandoReglas(String ope){
 		String open=ope.substring(1);
-		String modoDirec = "NO EXISTE";
+		modoDirec = "NO EXISTE";
 		int valorOperando = FUERA_DE_RANGO;
 		String auxValorOperando;
 		bytes=buscarLista();
@@ -252,7 +255,7 @@ public String operandoReglas(String ope){
 		ERROR = false;
 		//////////////////////////Evalua INH/////////////////////////////////////////////////////////////////////////
 		if(open.equals(""))	{
-			modoDirec = "INH";
+			modoDirec = "Inherente";
 			System.out.println("OPERANDO: NULL --->INH"+bytes);
 		}//FIN if
 			
@@ -265,11 +268,15 @@ public String operandoReglas(String ope){
 			{
 				if(estaEntre(valorOperando,0,255) == true)
 				{
-					modoDirec = "IMM";
+					modoDirec = "Inmediato";
 					System.out.println("OPERANDO: "+open+" "+"-->INMEDIATO"+" "+bytes);
+					System.out.println("BYTES: 2\n");
+
+					
 				}else if(estaEntre(valorOperando,0,65535) == true){
-					modoDirec = "IMM";	
+					modoDirec = "Inmediato";	
 					System.out.println("OPERANDO: "+open+" "+"-->INMEDIATO"+" "+bytes);
+					System.out.println("BYTES: 2\n");
 
 				}else{
 					System.out.printf("ERROR : LOS RANGOS VALIDOS DE INMEDIATO SON (0,255) O (0,65535)");
@@ -285,12 +292,15 @@ public String operandoReglas(String ope){
 			if(ERROR == false)
 			{
 				if(estaEntre(valorOperando,0,255) == true){
-					modoDirec = "DIR";
+					modoDirec = "Directo";
 					System.out.println("OPERANDO: "+open+" "+"-->DIRECTO"+" "+bytes);
+					System.out.println("BYTES: 2\n");
+
 
 				}else if(estaEntre(valorOperando,256,65535) == true){
-					modoDirec = "EXT";
+					modoDirec = "Extendido";
 					System.out.println("OPERANDO: "+open+" "+"-->EXTENDIDO"+" "+bytes);
+					System.out.println("BYTES: 3\n");
 
 				}else{
 					System.out.printf("ERROR : RANGOS VALIDO DE (DIR) ES (0,255), DE (EXT) ES (256,65535)");
@@ -317,21 +327,25 @@ public String operandoReglas(String ope){
 				{
 					modoDirec = "IDX";
 					System.out.println("OPERANDO: "+open+" "+"-->IDX"+" "+bytes);
+					System.out.println("BYTES: 2\n");
 
 				}else if(estaEntre(valorOperando,-256,-17) == true)
 				{
 					modoDirec = "IDX1";
 					System.out.println("OPERANDO: "+open+" "+"-->IDX1"+" "+bytes);
+					System.out.println("BYTES: 3\n");
 
 				}else if (estaEntre(valorOperando,16,255) == true)
 				{
 					modoDirec = "IDX1";
 					System.out.println("OPERANDO: "+open+" "+"-->IDX1"+" "+bytes);
+					System.out.println("BYTES: 3\n");
 
 				}else if (estaEntre(valorOperando,256,65535) == true)
 				{
 					modoDirec = "IDX2";
 					System.out.println("OPERANDO: "+open+" "+"-->IDX2"+" "+bytes);
+					System.out.println("BYTES: 4\n");
 
 				}else{
 					System.out.printf("ERROR : RANGO VALIDO DE (IDX) ES (0,255), (IDX1) (-256,-17) O (16,255), (IDX2) (256,65535)");
@@ -349,8 +363,10 @@ public String operandoReglas(String ope){
 			{
 				if(estaEntre(valorOperando,1,8) == true)
 				{
-					modoDirec = "IDXpre+/-";
+					modoDirec = "IDX";
 					System.out.println("OPERANDO: "+open+" "+"-->IDX pre incremento"+" "+bytes);
+					System.out.println("BYTES: 2\n");
+
 
 				}else{
 					System.out.printf("ERROR : RANGO VALIDO DE (IDX) PRE/POST INC/DEC ES (1,8)");
@@ -367,8 +383,9 @@ public String operandoReglas(String ope){
 			{
 				if(estaEntre(valorOperando,1,8) == true)
 				{
-					modoDirec = "IDXpost+/-";
+					modoDirec = "IDX";
 					System.out.println("OPERANDO: "+open+" "+"-->IDX post incremento"+" "+bytes);
+					System.out.println("BYTES: 2\n");
 
 				}else{
 					System.out.printf("ERROR : RANGO VALIDO DE (IDX) PRE/POST INC/DEC ES (1,8)");
@@ -381,8 +398,10 @@ public String operandoReglas(String ope){
 		//////////////////////////Evalua IDX///////////////////////////////////////////////////////////////////////
 		else if(open.matches("[A|B|D],(X|Y|(SP)|(PC))"))
 		{
-			modoDirec = "IDXA";
+			modoDirec = "IDX";
 			System.out.println("OPERANDO: "+open+" "+"-->IDX Acumulador"+" "+bytes);
+			System.out.println("BYTES: 2\n");
+
 
 		}//FIN else if
 			
@@ -398,6 +417,7 @@ public String operandoReglas(String ope){
 				{
 					modoDirec = "[IDX2]";
 					System.out.println("OPERANDO: "+open+" "+"-->IDX2"+" "+bytes);
+					System.out.println("BYTES: 4\n");
 
 				}else{
 					System.out.printf("ERROR : RANGO VALIDO DE ([IDX2]) ES (0,65535)");
@@ -413,6 +433,7 @@ public String operandoReglas(String ope){
 		{
 			modoDirec = "[D,IDX]";
 			System.out.println("OPERANDO: "+open+" "+"-->D,IDX"+" "+bytes);
+			System.out.println("BYTES: 2\n");
 
 		}//FIN else if
 			
@@ -483,13 +504,42 @@ String list[]=lista.split("\n");
 for(int i=0;i<list.length;i++){
 	String split[]=list[i].split("\t");
 	if(CODOP.equals(split[0])){
-		s+=/*split[2]+" "+*/" BYTES: "+split[6]+" ";
-	}
+		s+=" "+split[2]+" "+"BYTES "+split[6];
+		bytes=split[6];
+		
+		}
 	
 
 
 	
 }
+/*if(modoDirec.equals("Inmediato")){
+	System.out.println("BYTES: 2\n");
+}
+if(modoDirec.equals("Directo")){
+	System.out.println("BYTES: 2\n");
+}
+if(modoDirec.equals("Extendido")){
+	System.out.println("BYTES: 3\n");
+}
+if(modoDirec.equals("Inmediato")){
+	System.out.println("BYTES: 2\n");
+}
+if(modoDirec.equals("IDX")){
+	System.out.println("BYTES: 2\n");
+}
+if(modoDirec.equals("IDX1")){
+	System.out.println("BYTES: 3\n");
+}
+if(modoDirec.equals("IDX2")){
+	System.out.println("BYTES: 4\n");
+}
+if(modoDirec.equals("[IDX2]")){
+	System.out.println("BYTES: 4\n");
+}
+if(modoDirec.equals("[D,IDX]")){
+	System.out.println("BYTES: 2\n");
+}*/
 if(s.equals("")){
 	s="	error";
 }
