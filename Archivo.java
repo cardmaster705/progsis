@@ -191,7 +191,7 @@ public void acomodo(String cadenan){
 
 void codigoReglas(String op){
 	int n=op.length();
-	modoDir=buscarLista();
+	modoDir=buscarLista(CODOP,modoDirec);
 	System.out.println("CODOP :"+op);
 	
 	
@@ -250,7 +250,7 @@ public String operandoReglas(String ope){
 		modoDirec = "NO EXISTE";
 		int valorOperando = FUERA_DE_RANGO;
 		String auxValorOperando;
-		bytes=buscarLista();
+		bytes=buscarLista(CODOP ,modoDirec);
 
 		ERROR = false;
 		//////////////////////////Evalua INH/////////////////////////////////////////////////////////////////////////
@@ -497,22 +497,19 @@ else
 		
 	
 }
-public String buscarLista(){
-	String s="";
-String list[]=lista.split("\n");
+public String buscarLista( String codop, String modoDirec){
+	  String list[]=lista.split("\n");
 
-for(int i=0;i<list.length;i++){
-	String split[]=list[i].split("\t");
-	if(CODOP.equals(split[0])){
-		s+=" "+split[2]+" "+"BYTES "+split[6];
-		bytes=split[6];
-		
-		}
-	
-
-
-	
-}
+	  for(int i=0;i<list.length;i++){
+	  	String split[]=list[i].split("\t");
+	  	if(codop.equals(split[0]) && modoDirec.equals(split[2])){
+	  		return split[6];
+	     
+	  	}//if
+	  }//for
+	  
+	  return "NO EXISTE";
+	}//buscarLista
 /*if(modoDirec.equals("Inmediato")){
 	System.out.println("BYTES: 2\n");
 }
@@ -540,11 +537,7 @@ if(modoDirec.equals("[IDX2]")){
 if(modoDirec.equals("[D,IDX]")){
 	System.out.println("BYTES: 2\n");
 }*/
-if(s.equals("")){
-	s="	error";
-}
-return s;
-}
+
 
 
 public boolean baseHex(String operando)			//Validar base hexadecimal
@@ -668,6 +661,3 @@ public int baseNumerica(String operando)
 	return integer;
 }//FIN baseNumerica
 }//fin de la clase
-	
-
-	
