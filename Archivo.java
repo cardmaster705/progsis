@@ -32,7 +32,7 @@ public class Archivo {
 	private StringTokenizer st;
 	String bytes="";
 	String modoDirec = "";
-
+	boolean t=false;
 	public String leerArchivos(){
 		
 		JFileChooser buscador= new JFileChooser();
@@ -191,7 +191,7 @@ public void acomodo(String cadenan){
 
 void codigoReglas(String op){
 	int n=op.length();
-	modoDir=buscarLista(CODOP,modoDirec);
+	//modoDir=buscarLista(CODOP,modoDirec);
 	System.out.println("CODOP :"+op);
 	
 	
@@ -250,13 +250,13 @@ public String operandoReglas(String ope){
 		modoDirec = "NO EXISTE";
 		int valorOperando = FUERA_DE_RANGO;
 		String auxValorOperando;
-		bytes=buscarLista(CODOP ,modoDirec);
-
+		int iteracion=0;
 		ERROR = false;
 		//////////////////////////Evalua INH/////////////////////////////////////////////////////////////////////////
 		if(open.equals(""))	{
 			modoDirec = "Inherente";
-			System.out.println("OPERANDO: NULL --->INH"+bytes);
+			//System.out.println("OPERANDO: NULL --->INH"+" BYTES:"+bytes);
+			
 		}//FIN if
 			
 		
@@ -269,14 +269,16 @@ public String operandoReglas(String ope){
 				if(estaEntre(valorOperando,0,255) == true)
 				{
 					modoDirec = "Inmediato";
-					System.out.println("OPERANDO: "+open+" "+"-->INMEDIATO"+" "+bytes);
-					System.out.println("BYTES: 2\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->INMEDIATO"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 2\n");
+				
 
 					
 				}else if(estaEntre(valorOperando,0,65535) == true){
 					modoDirec = "Inmediato";	
-					System.out.println("OPERANDO: "+open+" "+"-->INMEDIATO"+" "+bytes);
-					System.out.println("BYTES: 2\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->INMEDIATO"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 2\n");
+					
 
 				}else{
 					System.out.printf("ERROR : LOS RANGOS VALIDOS DE INMEDIATO SON (0,255) O (0,65535)");
@@ -292,15 +294,16 @@ public String operandoReglas(String ope){
 			if(ERROR == false)
 			{
 				if(estaEntre(valorOperando,0,255) == true){
+					
 					modoDirec = "Directo";
-					System.out.println("OPERANDO: "+open+" "+"-->DIRECTO"+" "+bytes);
-					System.out.println("BYTES: 2\n");
-
+					//System.out.println("OPERANDO: "+open+" "+"-->DIRECTO");
+					//System.out.println(bytes);
 
 				}else if(estaEntre(valorOperando,256,65535) == true){
 					modoDirec = "Extendido";
-					System.out.println("OPERANDO: "+open+" "+"-->EXTENDIDO"+" "+bytes);
-					System.out.println("BYTES: 3\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->EXTENDIDO"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 3\n");
+					
 
 				}else{
 					System.out.printf("ERROR : RANGOS VALIDO DE (DIR) ES (0,255), DE (EXT) ES (256,65535)");
@@ -326,26 +329,30 @@ public String operandoReglas(String ope){
 				if(estaEntre(valorOperando,-16,15) == true)
 				{
 					modoDirec = "IDX";
-					System.out.println("OPERANDO: "+open+" "+"-->IDX"+" "+bytes);
-					System.out.println("BYTES: 2\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->IDX"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 2\n");
+					
 
 				}else if(estaEntre(valorOperando,-256,-17) == true)
 				{
 					modoDirec = "IDX1";
-					System.out.println("OPERANDO: "+open+" "+"-->IDX1"+" "+bytes);
-					System.out.println("BYTES: 3\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->IDX1"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 3\n");
+					
 
 				}else if (estaEntre(valorOperando,16,255) == true)
 				{
 					modoDirec = "IDX1";
-					System.out.println("OPERANDO: "+open+" "+"-->IDX1"+" "+bytes);
-					System.out.println("BYTES: 3\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->IDX1"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 3\n");
+					
 
 				}else if (estaEntre(valorOperando,256,65535) == true)
 				{
 					modoDirec = "IDX2";
-					System.out.println("OPERANDO: "+open+" "+"-->IDX2"+" "+bytes);
-					System.out.println("BYTES: 4\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->IDX2"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 4\n");
+					
 
 				}else{
 					System.out.printf("ERROR : RANGO VALIDO DE (IDX) ES (0,255), (IDX1) (-256,-17) O (16,255), (IDX2) (256,65535)");
@@ -364,8 +371,9 @@ public String operandoReglas(String ope){
 				if(estaEntre(valorOperando,1,8) == true)
 				{
 					modoDirec = "IDX";
-					System.out.println("OPERANDO: "+open+" "+"-->IDX pre incremento"+" "+bytes);
-					System.out.println("BYTES: 2\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->IDX pre incremento"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 2\n");
+					
 
 
 				}else{
@@ -384,8 +392,9 @@ public String operandoReglas(String ope){
 				if(estaEntre(valorOperando,1,8) == true)
 				{
 					modoDirec = "IDX";
-					System.out.println("OPERANDO: "+open+" "+"-->IDX post incremento"+" "+bytes);
-					System.out.println("BYTES: 2\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->IDX post incremento"+" BYTES:"+bytes);
+					//System.out.println("BYTES: 2\n");
+					
 
 				}else{
 					System.out.printf("ERROR : RANGO VALIDO DE (IDX) PRE/POST INC/DEC ES (1,8)");
@@ -399,8 +408,9 @@ public String operandoReglas(String ope){
 		else if(open.matches("[A|B|D],(X|Y|(SP)|(PC))"))
 		{
 			modoDirec = "IDX";
-			System.out.println("OPERANDO: "+open+" "+"-->IDX Acumulador"+" "+bytes);
-			System.out.println("BYTES: 2\n");
+			//System.out.println("OPERANDO: "+open+" "+"-->IDX Acumulador"+" BYTES:"+bytes);
+			//System.out.println("BYTES: 2\n");
+			
 
 
 		}//FIN else if
@@ -416,8 +426,9 @@ public String operandoReglas(String ope){
 				if(estaEntre(valorOperando,0,65535) == true)
 				{
 					modoDirec = "[IDX2]";
-					System.out.println("OPERANDO: "+open+" "+"-->IDX2"+" "+bytes);
-					System.out.println("BYTES: 4\n");
+					//System.out.println("OPERANDO: "+open+" "+"-->IDX2"+" BYTES"+bytes);
+					//System.out.println("BYTES: 4\n");
+					
 
 				}else{
 					System.out.printf("ERROR : RANGO VALIDO DE ([IDX2]) ES (0,65535)");
@@ -432,8 +443,9 @@ public String operandoReglas(String ope){
 		else if(open.matches("\\[D,(X|Y|(SP)|(PC))\\]"))
 		{
 			modoDirec = "[D,IDX]";
-			System.out.println("OPERANDO: "+open+" "+"-->D,IDX"+" "+bytes);
-			System.out.println("BYTES: 2\n");
+			//System.out.println("OPERANDO: "+open+" "+"-->D,IDX"+" BYTES:"+bytes);
+			//System.out.println("BYTES: 2\n");
+			
 
 		}//FIN else if
 			
@@ -442,7 +454,8 @@ public String operandoReglas(String ope){
 		else if(open.matches("([A-Z]\\w*\\d*)"))
 		{
 			modoDirec = "REL";
-			System.out.println("OPERANDO: "+open+" "+"-->RELATIVO"+" "+bytes);
+			//System.out.println("OPERANDO: "+open+" "+"-->RELATIVO"+" BYTES:"+bytes);
+			
 
 		}//FIN else if
 /*		
@@ -451,9 +464,12 @@ public String operandoReglas(String ope){
 			System.out.print("ERROR : BASES NUMERICAS DISPONIBLES ($<valor> , Hexadecimal) (@<valor>, Octal) (%<valor>, Binario) (<valor> , Decimal)");
 			ERROR = true;
 		}//FIN else if ERROR INMEDIATO
-*/			
+*/		
+			bytes=buscarLista(CODOP ,modoDirec);	
+			System.out.println("OPERANDO: "+open+" BYTES:"+bytes);
+		
 		return modoDirec;	
-	}//FIN identificarOperando
+	}//FIN 
 	
 	
 
@@ -503,6 +519,7 @@ public String buscarLista( String codop, String modoDirec){
 	  for(int i=0;i<list.length;i++){
 	  	String split[]=list[i].split("\t");
 	  	if(codop.equals(split[0]) && modoDirec.equals(split[2])){
+	  		t=true;
 	  		return split[6];
 	     
 	  	}//if
