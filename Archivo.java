@@ -1,6 +1,10 @@
 package nuevo;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,6 +12,7 @@ import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 
 public class Archivo {
+	StringBuilder archivos= new StringBuilder();
 	final int error=-1;
 	final int a=97 ,z=122 ,A=65 ,Z=90 ,ZERO=48 ,NINE=57;
 	String texto="";
@@ -33,6 +38,8 @@ public class Archivo {
 	String bytes="";
 	String modoDirec = "";
 	boolean t=false;
+	 BufferedWriter bw;
+	
 	public String leerArchivos(){
 		
 		JFileChooser buscador= new JFileChooser();
@@ -467,7 +474,7 @@ public String operandoReglas(String ope){
 */		
 			bytes=buscarLista(CODOP ,modoDirec);	
 			System.out.println("OPERANDO: "+open+" BYTES:"+bytes);
-		
+			
 		return modoDirec;	
 	}//FIN 
 	
@@ -677,4 +684,28 @@ public int baseNumerica(String operando)
 
 	return integer;
 }//FIN baseNumerica
+//public void lineaArchivo(String cadena){
+	//bw.write(cadena);
+//}
+public void crearArchivoLst(){
+	File fichero = new File("lst.txt");
+	try {
+	
+       
+        if(fichero.exists()) {
+            bw = new BufferedWriter(new FileWriter(fichero));
+            bw.write(CODOP+" "+OPERANDO+"\n");
+        } else {
+            bw = new BufferedWriter(new FileWriter(fichero));
+           
+            bw.write("no hola");
+        }
+       bw.close();
+		} catch (IOException ioe) {
+		  ioe.printStackTrace();
+		}
+}//fin del metodo 
+//public void cerrarLst(){
+	
+//}
 }//fin de la clase
