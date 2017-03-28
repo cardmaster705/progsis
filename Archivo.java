@@ -186,9 +186,11 @@ public void acomodo(String cadenan){
 				
 		}//fin del else if
 	}
-}
-		
+}		
+		archivos.append(CODOP+"\t"+OPERANDO);
+		archivos.append("\r\n");
 }//final del ciclo for
+	//archivos.append(CODOP+"\t"+OPERANDO+"\n");
 }//final del metodo
 
 
@@ -687,18 +689,19 @@ public int baseNumerica(String operando)
 //public void lineaArchivo(String cadena){
 	//bw.write(cadena);
 //}
-public void crearArchivoLst(){
+public void crearArchivoLst(String archi){
 	File fichero = new File("lst.txt");
 	try {
 	
        
         if(fichero.exists()) {
             bw = new BufferedWriter(new FileWriter(fichero));
-            bw.write(CODOP+" "+OPERANDO+"\n");
+            bw.write("CODOP"+"\t"+"OPERANDO"+"\r\n");
+            bw.write(archi);
         } else {
             bw = new BufferedWriter(new FileWriter(fichero));
            
-            bw.write("no hola");
+            bw.write(archi);
         }
        bw.close();
 		} catch (IOException ioe) {

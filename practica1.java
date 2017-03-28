@@ -13,8 +13,8 @@ public class practica1 {
 		String texto=uno.leerArchivos();
 		String lista=uno.leerLista();
 		uno.acomodo(texto);
-		uno.crearArchivoLst();
-		
+		uno.crearArchivoLst(uno.archivos.toString());
+		System.out.println(uno.archivos.toString());
 	}
 
 }
