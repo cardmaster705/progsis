@@ -1,8 +1,14 @@
 package programaciondeSistemas;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Formatter;
 import java.util.StringTokenizer;
 
 public class parsearArchivo 
@@ -19,28 +25,79 @@ public class parsearArchivo
 	private final int D7 = 55;	//Referencia al codigo ASCII digito 7
 	private final int D9 = 57;	//Referencia al codigo ASCII digito 9
 	
+	private final int FUERA_DE_RANGO = -257;
+	
 	private final String tabop;
 	
-	//Variables del programa
+	File temp;
+	FileWriter fwTemp;
+	BufferedWriter bwTemp;
+	PrintWriter pwTemp;
+	
+	FileWriter fw;
+	BufferedWriter bw;
+	PrintWriter pw;
+	FileReader fr;
+	BufferedReader br;
+	
 	private StringBuilder Etiqueta = new StringBuilder();
 	private StringBuilder Codop = new StringBuilder();
 	private StringBuilder Operando = new StringBuilder();
 	private StringBuilder Comentario = new StringBuilder();
+	
+	private StringBuilder etiquetasTabSim = new StringBuilder();
+	
+	int DIR_INIC;
+	int CONTLOC;
+	private int valorOperando = FUERA_DE_RANGO;
+	
 	
 	private int Linea = 0;
 	private int byteDirec = 0;
 	
 	//Variables auxiliares
 	private StringTokenizer st;
-	private final int FUERA_DE_RANGO = -257;
 	private boolean ERROR = false;
 	private boolean ERRORmodoDirec = true;
+	
+	String auxnomArchivoTS;
+	String auxnomArchivoTemp;
+	
 	
 	
 	public parsearArchivo() 						//Constructor donde crea variable local con el TABOP para evitar leer el archivo continuamente.
 	{
 		this.tabop = guardarTabop();	
 	}
+	
+	public void leerArchivo(String cadena)
+	{
+		FileReader f;	//inicializar fileReader
+		BufferedReader b;	//inicializar lector
+		
+		String ln; //Auxiliar del lector
+		
+		System.out.printf("\n%15s%-55s\n","///////////////",cadena);
+		try
+		{
+			f = new FileReader(cadena);	//ABRIR el archivo indicado
+			b = new BufferedReader(f);	//LEER el archivo indicado
+			
+			while((ln = b.readLine()) != null) //LEER MIENTRAS no sea fin de archivo
+			{
+				System.out.println(ln);
+			}//FIN while
+			b.close();	//Cierra el lector
+			f.close();	//Ciera el archivo
+		}//FIN try
+		catch(IOException e)
+		{
+			System.out.println(e);		//Imprimir ERROR
+		}//FIN catch
+				
+		System.out.printf("%15s%55s\n","///////////////","///////////////////////////////////////////////////////");
+		
+	}//FIN leerArchivo
 	
 	public String guardarTabop()					//Crear variable local con TABOP
 	{
@@ -87,7 +144,7 @@ public class parsearArchivo
 		return TABOP;
 		
 	}//FIN 
-	
+
 	public boolean caracterLetra(char caracter)		//Devuelve verdadero si el caracter es una letra, ya sea minuscula o minuscula
 	{
 		if(caracter >= A && caracter <= Z)	//Entre la 'A' y la 'Z'
@@ -106,7 +163,7 @@ public class parsearArchivo
 			return false;
 	}//FIN caracterLetra
 	
-	public void validarEtiqueta(String cadena)		//Validar etiqueta
+	public boolean validarEtiqueta(String cadena)		//Validar etiqueta
 	{
 		boolean caracterValido = true;	//Auxiliar para determinar si existe un caracter invalido
 		
@@ -137,10 +194,10 @@ public class parsearArchivo
 			}//FIN else
 			
 		}//FIN else
-		
+		return caracterValido;
 	}//validarEtiqueta
 	
-	public void validarCodop(String cadena)			//Validar Codop	
+	public boolean validarCodop(String cadena)			//Validar Codop	
 	{
 		boolean caracterValido = true;	//Auxiliar para determinar si existe un caracter invalido
 		short contadorPunto = 0;		//Variable auxiliar para contar los '.' que aparezcan
@@ -176,7 +233,7 @@ public class parsearArchivo
 			}//FIN else
 			
 		}//FIN else
-		
+		return caracterValido;
 	}//validarCodop
 	
 	public void validarOperando(String cadena)		//Validar operando
@@ -197,8 +254,54 @@ public class parsearArchivo
 			System.out.printf("%-15s\n","COMENTARIO");
 	}
 	
+	public void escribirArchivo(String Etiqueta, String Codop, String Operando,PrintWriter pw)
+	{
+		Codop = Codop.toUpperCase();
+		
+		if(Etiqueta.equals(""))
+			Etiqueta = "NULL";
+		if (Operando.equals(""))
+			Operando = "NULL";
+		
+		if(Codop.equals("EQU")){
+			if(valorOperando >= 0 && valorOperando <= 15){
+				pw.printf("000%h|%s|%s|%s",valorOperando,Etiqueta,Codop,Operando);
+				pw.println("");
+			}else if(valorOperando >= 16 && valorOperando <= 255){
+				pw.printf("00%h|%s|%s|%s",valorOperando,Etiqueta,Codop,Operando);
+				pw.println("");
+			}else if(valorOperando >= 256 && valorOperando <= 4095){
+				pw.printf("0%h|%s|%s|%s",valorOperando,Etiqueta,Codop,Operando);
+				pw.println("");
+			}else if(valorOperando >= 4096 && valorOperando <= 65535){
+				pw.printf("%h|%s|%s|%s",valorOperando,Etiqueta,Codop,Operando);
+				pw.println("");
+			}
+		}else
+		{
+			if(CONTLOC >= 0 && CONTLOC <= 15){
+				pw.printf("000%h|%s|%s|%s",CONTLOC,Etiqueta,Codop,Operando);
+				pw.println("");
+			}else if(CONTLOC >= 16 && CONTLOC <= 255){
+				pw.printf("00%h|%s|%s|%s",CONTLOC,Etiqueta,Codop,Operando);
+				pw.println("");
+			}else if(CONTLOC >= 256 && CONTLOC <= 4095){
+				pw.printf("0%h|%s|%s|%s",CONTLOC,Etiqueta,Codop,Operando);
+				pw.println("");
+			}else if(CONTLOC >= 4096 && CONTLOC <= 65535){
+				pw.printf("%h|%s|%s|%s",CONTLOC,Etiqueta,Codop,Operando);
+				pw.println("");
+			}//FIN if,else if,else if,else if
+		}//FIN else
+				
+	}//FIN escribir archivo
+	
 	public void validarLinea(String Etiqueta, String Codop, String Operando, String Comentario)	//Validar linea
 	{
+		boolean etiCORRECTA;
+		boolean codopCORRECTO;
+		
+		boolean codopOdirValido = true;
 		
 		/**				Validar sintaxis
 		 * 					X = 1 | 0
@@ -213,22 +316,44 @@ public class parsearArchivo
 		System.out.printf("%-6s ","["+Linea+"]");	
 		if(Etiqueta.matches(".*") && Codop.matches(".+") && Operando.matches(".*") && Comentario.matches(".*")) //Validar sintaxis [Etiqueta]Codop[Operando][Comentario]		
 		{
-			validarEtiqueta(Etiqueta);
-			validarCodop(Codop);
+			
+			etiCORRECTA = validarEtiqueta(Etiqueta);
+			codopCORRECTO = validarCodop(Codop);
 			validarOperando(Operando);
 			validarComentario(Comentario);
+			if(etiCORRECTA == true && codopCORRECTO == true)
+				if(validarDirectiva(Etiqueta, Codop, Operando) == false){
+					codopOdirValido = identificarCodop(Codop, Operando);	
+				}
 			
-			identificarCodop(Codop, Operando);
-		}//FIN if				
-		
-		else if(Etiqueta.equals("") && Codop.equals("") && Operando.equals("") && Comentario.compareTo("") != 0)	//Validar sintaxis donde solo exista Comentario
-			validarComentario(Comentario);		
-				
+			
+			if(codopOdirValido == true)
+			{
+				if(Etiqueta.equals(""))
+					escribirArchivo(Etiqueta, Codop, Operando, pwTemp);
+				else
+				{
+					etiquetasTabSim.append(Etiqueta);
+					etiquetasTabSim.append(' ');
+					escribirArchivo(Etiqueta, Codop, Operando, pw);
+					escribirArchivo(Etiqueta, Codop, Operando, pwTemp);
+				}//FIN else
+				CONTLOC += byteDirec;
+	
+			}//FIN codopOdirValido
+			
+		}else if(Etiqueta.equals("") && Codop.equals("") && Operando.equals("") && Comentario.compareTo("") != 0)	//Validar sintaxis donde solo exista Comentario
+			validarComentario(Comentario);				
 		else	//Si no es ninguna de las anteriores imprimir un ERROR
-			System.out.println("ERROR DE SINTAXIS, DEEBE DE EXISTIR POR LO MENOS UN CODOP");	
+		{
+			System.out.println("ERROR DE SINTAXIS, DEEBE DE EXISTIR POR LO MENOS UN CODOP");
+
+		}//FIN if,else if,else
+				
 		
 		System.out.printf("\n");
 		Linea++;
+		
 	}//validarLinea
 	
 	public void imprimirReglaDireccionamiento()	//Imprimir las reglas de direccionamiento
@@ -257,8 +382,8 @@ public class parsearArchivo
 					+ "\t|%-47s|%-44s|\n"
 					+ "\t+-----------------------------------------------+--------------------------------------------+\n\n"
 					,"<digito> ::= 0-9","<letra> ::= A-Z | a-z"
-					,"<hexa> ::= $ { [A-F] | [a-f] | [<digito>] }+","<octal> ::= @ {0-7}+"
-					,"<binario> ::= % {0|1}+","<decimal> ::= {<digito>}+"
+					,"<hexa> ::= $ { A-F | a-f | <digito> }+","<octal> ::= @ {0-7}+"
+					,"<binario> ::= % {0|1}+","<decimal> ::= [-]{<digito>}+"
 					,"MODO DE DIRECCIONAMIENTO","RANGO DEL NUMERO"
 					,"<INH>::= ",""
 					,"<IMM>::= #{<hexa>|<octal>|<binario>|<decimal>}+","(0,255) | (0,65535)"
@@ -340,8 +465,8 @@ public class parsearArchivo
 		
 	}//FIN
 	
-	public void identificarCodop(String codop, String operando)	//Identificar codop
-	{			
+	public boolean identificarCodop(String codop, String operando)	//Identificar codop
+	{		
 		byteDirec = 0;
 		
 		codop = codop.toUpperCase();	//Convertir la cadena tomada en mayusculas para facilitar las validaciones
@@ -357,8 +482,9 @@ public class parsearArchivo
 		String con_sin_Operando;	//Variable auxiliar que guarda uno de los registros del tokenizer
 		String auxmodoDirec = "";
 		
-		
 		int i = 0;	//Variable auxiliar para imprimir el encabezado de la tabla de la informacion a mostrar
+		
+		
 		
 		if(operando.equals(""))		//Si el operando esta vacio entonces contieneOPERANDO = false;
 			contieneOPERANDO = false;
@@ -366,7 +492,6 @@ public class parsearArchivo
 			contieneOPERANDO = true;
 		
 		st = new StringTokenizer(tabop, "\n|");	//Se crea un objeto StringTokenizer de la variable local que contiene el TABOP
-		
 		while(st.hasMoreTokens())	//LEER MIENTRAS existan mas registros
 		{		
 			if(codop.equals(st.nextToken()) )	//LEER el siguiente registro que indica el nombre del codop en el tabop y comparar si el codop recibido es igual al registro leido
@@ -385,12 +510,18 @@ public class parsearArchivo
 				{
 					if(operandoValido == false)
 					{
+						ERRORmodoDirec = false;
 						if(contieneOPERANDO == false)	//Si contiene operando y nuestra variable auxiliar que determina  es falso, quiere decir que el codop debe de contener operando
-							System.out.printf("\n\tEL CODOP DEBE DE TENER OPERANDO");
-						else if(contieneOPERANDO == true)//Si no contiene operando y nuestra variable auxiliar que determina es falso, quiere decir que el codop no debe de contener operando
-							System.out.printf("\n\tEL CODOP NO DEBE DE TENER OPERANDO");
+						{
+							System.out.printf("ERROR : EL CODOP DEBE DE TENER OPERANDO");
+							ERROR = true;
+						}else if(contieneOPERANDO == true)//Si no contiene operando y nuestra variable auxiliar que determina es falso, quiere decir que el codop no debe de contener operando
+						{
+							System.out.printf("ERROR : EL CODOP NO DEBE DE TENER OPERANDO");
+							ERROR = true;
+						}//FIN if,else if
 						
-						System.out.printf("\t+-----------+------------+------+---------------+----------+\n"	//Imprimir la cabecera de la tabla a mostrar
+						System.out.printf("\n\t+-----------+------------+------+---------------+----------+\n"	//Imprimir la cabecera de la tabla a mostrar
 								+ "\t|%-11s|%-12s|%-6s|%-15s|%-11s","MODO DE DIR","COD.MAQ.","BYTES","BYTES POR CALC","SUMA BYTES|"
 								+ "\n\t+-----------+------------+------+---------------+----------+\n");
 						i++;	
@@ -436,27 +567,35 @@ public class parsearArchivo
 					if(operandoValido == false){
 						System.out.printf("\t|%-11s|%-12s|%-6s|%-15s|%-10s|\n",auxmodoDirec,st.nextToken(),st.nextToken(),st.nextToken(),st.nextToken());
 					}	
-				}//FIN else if	
+				}else if(operandoValido == false)
+					System.out.printf("\t|%-11s|%-12s|%-6s|%-15s|%-10s|\n",auxmodoDirec,st.nextToken(),st.nextToken(),st.nextToken(),st.nextToken());
+					
 				
 			}//FIN if
-
-				
+	
 		}//FIN while
 		if(i > 0)
-			System.out.println("\t+-----------+------------+------+---------------+----------+\n"); //Al terminar el while imprimir el cierre de la tabla
-		
-		if(codopEncontrado == true)	
+			System.out.printf("\t+-----------+------------+------+---------------+----------+"); //Al terminar el while imprimir el cierre de la tabla
+		if(codopEncontrado == false)
+			System.out.printf("NO SE ENCONTRO EL CODOP DE OPERACION");
+		else 
 			if(modoDirecCORRECTO == true)
-				byteDireccionamiento(modoDirec);///AQUI PONER una funcion
+				byteDireccionamiento(modoDirec);
 			else if(modoDirec.equals("NO EXISTE")){
 				if(ERROR == false)
 					System.out.print("ERROR : MODO DE DIRECCIONAMIENTO INCORRECTO");
 				ERRORmodoDirec = false;
 			}else
-				System.out.printf("ERROR : NO EXISTE MODO DE DIRECCIONAMIENTO ("+modoDirec+") EN ("+codop.toUpperCase()+")\n");			
-		else
-		System.out.printf("NO SE ENCONTRO EL CODOP DE OPERACION");
+			{
+				if(ERROR == false)
+					System.out.printf("ERROR : NO EXISTE MODO DE DIRECCIONAMIENTO ("+modoDirec+") EN ("+codop.toUpperCase()+")\n");	
+			}//FIN if,else if,else
 		
+		if(codopEncontrado == false || (codopEncontrado == true &&  modoDirecCORRECTO == false))
+			return false;
+		else
+			return true;
+
 	}//FIN identificarOperando
 	
 	public boolean baseHex(String operando)			//Validar base hexadecimal
@@ -501,9 +640,18 @@ public class parsearArchivo
 	{
 		boolean esDecimal = true;
 		
-		for(int i = 0; i < operando.length();i++)	//leer caracter por caracter y valdiarlo
-			if(!(caracterDigito(operando.charAt(i)) == true))	//Si no es un digito del 0-9 es incorrecto
-				esDecimal = false;
+		if (caracterDigito(operando.charAt(0)) == true)
+		{
+			for(int j = 0; j < operando.length();j++)	//leer caracter por caracter y valdiarlo
+				if(!(caracterDigito(operando.charAt(j)) == true))	//Si no es un digito del 0-9 es incorrecto
+					esDecimal = false;
+		
+		}else if(operando.charAt(0) == '-')
+			for(int i = 1; i < operando.length();i++)	//leer caracter por caracter y valdiarlo
+				if(!(caracterDigito(operando.charAt(i)) == true))	//Si no es un digito del 0-9 es incorrecto
+					esDecimal = false;
+		
+
 					
 		return esDecimal;
 	}//FIN baseDecimal
@@ -522,7 +670,9 @@ public class parsearArchivo
 		String baseNum = "";
 		
 		int integer = FUERA_DE_RANGO;		//Numero fuera de rango de cualquier modo de direccionamiento
+		
 		baseNum = operando.substring(1);
+		
 		
 		if(operando.charAt(0) == '$')
 		{
@@ -559,7 +709,7 @@ public class parsearArchivo
 				System.out.printf("ERROR : LOS CARACTERES VALIDOS DE LA BASE BINARIA SON '0-1'");
 				ERROR = true;
 			}//FIN else
-		}else if(caracterDigito(operando.charAt(0)) == true )
+		}else if(caracterDigito(operando.charAt(0)) == true  || operando.charAt(0) == '-')
 		{
 			if(baseDecimal(operando) == true)
 				integer = Integer.parseInt(operando);
@@ -582,9 +732,8 @@ public class parsearArchivo
 	{
 		operando = operando.toUpperCase();
 		String modoDirec = "NO EXISTE";
-		int valorOperando = FUERA_DE_RANGO;
 		String auxValorOperando;
-		
+		valorOperando = FUERA_DE_RANGO;
 		ERROR = false;
 		//////////////////////////Evalua INH/////////////////////////////////////////////////////////////////////////
 		if(operando.equals(""))	{
@@ -636,8 +785,11 @@ public class parsearArchivo
 			{
 				st = new StringTokenizer(operando, ",");
 				auxValorOperando = st.nextToken();
-				if(!(auxValorOperando.charAt(0) == '-' && auxValorOperando.length() == 1))	//Si la sub cadena NO esta compuesta solo por el caracter '-' entonces..
+				if(!(auxValorOperando.length() == 1 && auxValorOperando.charAt(0) == '-'))	//Si la sub cadena NO esta compuesta solo por el caracter '-' entonces..
+				{
 					valorOperando = Integer.parseInt(auxValorOperando);
+				}//Fin if
+					
 			}//FIN else
 			if(ERROR == false)
 			{
@@ -732,18 +884,129 @@ public class parsearArchivo
 		{
 			modoDirec = "REL";
 		}//FIN else if
-/*		
-		else if(operando.equals("#"))
-		{
-			System.out.print("ERROR : BASES NUMERICAS DISPONIBLES ($<valor> , Hexadecimal) (@<valor>, Octal) (%<valor>, Binario) (<valor> , Decimal)");
-			ERROR = true;
-		}//FIN else if ERROR INMEDIATO
-*/			
+		
 		return modoDirec;	
 	}//FIN identificarOperando
 		
+	public boolean validarDirectiva(String etiqueta, String codop,String operando)
+	{
+		boolean etiquetaUsada = false;
+		boolean directivaValida = true;
+		valorOperando = FUERA_DE_RANGO;
+		byteDirec = 0;
+		codop = codop.toUpperCase();
+		
+		switch(codop)
+		{
+		case "ORG":
+			if(!(operando.equals("")))
+			{
+				valorOperando = baseNumerica(operando);
+				if(ERROR == false)
+					if(estaEntre(valorOperando, 0, 65535) == true)
+					{
+						DIR_INIC = CONTLOC = valorOperando;
+					}else{
+						System.out.printf("ERROR : RANGO VALIDO (0,65535)");
+					}
+						
+			}else{
+				System.out.printf("ERROR : LA DIRECTIVA (ORG) DEBE DE CONTENER UN VALOR");
+			}		
+			break;
+			
+		case "END":
+			if(!(operando.equals(""))){
+				System.out.printf("ERROR : END NO DEBE DE CONTENER OPERANDO");
+			}
+			break;
+			
+		case "EQU":
+			if(etiqueta.equals("") || operando.equals("")){
+				System.out.printf("ERROR : EQU DEBE DE TENER ETIQUETA Y OPERANDO");
+			}else
+			{
+				/**
+				 * Leer variable auxiliar con etiquetas en tabsim
+				 */
+				String[] result = etiquetasTabSim.toString().split("\\s");
+				for(int i = 0; i < result.length; i++)
+					if(result[i].equals(etiqueta))
+						etiquetaUsada = true;
+				
+				//Si la etiqueta ya existe en el archivo ERROR si no prosigue :D
+				if(etiquetaUsada == false){
+					valorOperando = baseNumerica(operando);
+					if(ERROR == false)
+						if(!(estaEntre(valorOperando, 0, 65535))){
+							System.out.printf("ERROR : RANGO VALIDO (0,65535)");
+						}
+				}//FIN etiquetausada == false
+				else
+					System.out.printf("ERROR : LA ETIQUETA YA FUE USADA");
+				
+						
+			}//FIN if,else
+			break;
+			
+		case "DB":case "DC.B":case "FCB":
+			valorOperando = baseNumerica(operando);
+			if(ERROR == false)
+				if(estaEntre(valorOperando, 0, 255) == true)
+					byteDirec = 1;
+				else{
+					System.out.printf("ERROR : RANGO VALIDO (0,255)");
+				}	
+			break;
+			
+		case "DW":case "DC.W":case "FDB":
+			valorOperando = baseNumerica(operando);
+			if(ERROR == false)
+				if(estaEntre(valorOperando, 0, 65535) == true)
+					byteDirec = 2;
+				else{
+					System.out.printf("ERROR : RANGO VALIDO (0,65535)");
+				}
+					
+			break;
+		case "FCC":
+			if(operando.matches("\".*\""))
+				byteDirec = (operando.length() - 2);
+			else{
+				System.out.printf("ERROR : SU VALOR SE REPRESENTA ENTRE COMILLAS DOBLES (\"valor\")");
+			}
+				
+			break;
+			
+		case "DS":case "DS.B":case "RMB":
+			valorOperando = baseNumerica(operando);
+			if(ERROR == false)
+				if(estaEntre(valorOperando, 0, 65535) == true)
+					byteDirec = valorOperando;
+				else{
+					System.out.printf("ERROR : RANGO VALIDO (0,65535)");
+				}	
+			break;
+			
+		case "DS.W":case "RMW":
+			valorOperando = baseNumerica(operando);
+			if(ERROR == false)
+				if(estaEntre(valorOperando, 0, 65535) == true)
+					byteDirec = (valorOperando * 2);
+				else{
+					System.out.printf("ERROR : RANGO VALIDO (0,65535)");
+				}
+			break;
+			
+			default: directivaValida = false;
+		}//FIN switch
+					
+		return directivaValida;
+	}//FIN validarDirectivas
+	
 	public void parsear(String nom)		//Funcion principal , toma como parametro el nombre del archivo que se va a parsear
 	{
+		etiquetasTabSim.delete(0, etiquetasTabSim.length());
 		/**
 		 * Guardar contenido del Archivo en una estructura temporal para parsearlo
 		 */
@@ -752,6 +1015,8 @@ public class parsearArchivo
 		String ln; //Auxiliar del lector
 		
 		ERRORmodoDirec = true;
+		
+		boolean existeERROR = false;
 		
 		int aux = 0;	//contador de lineas
 		
@@ -783,8 +1048,31 @@ public class parsearArchivo
 		catch(IOException e)
 		{
 			System.out.println(e);		//Imprimir ERROR
+			existeERROR = true;
 		}//FIN catch
 				
+		/**
+		 * Crear archivos auxiliares
+		 */
+		if(existeERROR == false){
+			this.auxnomArchivoTS = nom.substring(0, (nom.length() - 4))+"-TabSim.txt";
+			auxnomArchivoTemp = nom.substring(0, (nom.length() - 4))+"-Temp.txt";
+			
+			try {
+				//Archivo tabSim
+				fw = new FileWriter(auxnomArchivoTS);
+				bw = new BufferedWriter(fw);
+				pw = new PrintWriter(bw);
+				
+				//Archivo temporal
+				fwTemp = new FileWriter(auxnomArchivoTemp);
+				bwTemp = new BufferedWriter(fwTemp);
+				pwTemp = new PrintWriter(bwTemp);
+		//		temp.deleteOnExit();	
+			} catch (IOException e1) {
+				e1.printStackTrace();	
+			}	
+		}//FIN error
 		
 		/**
 		 * Analizar la estructura
@@ -875,14 +1163,41 @@ public class parsearArchivo
 			
 		}//FIN del for
 		
-		String ultimoCodop;	
-		ultimoCodop = Codop.toString().toUpperCase();	//Convertir en mayusculas el ultimo codop
-
-		if(!ultimoCodop.equals("END"))	//Si no es END el ultimo codop imprimir error
-			System.out.printf("ERROR DE SINTAXIS, EL ULTIMO CODOP DEBE DE SER \"END\"");
 		
+		if(existeERROR == false){
+			String ultimoCodop;	
+			ultimoCodop = Codop.toString().toUpperCase();	//Convertir en mayusculas el ultimo codop
+
+			if(!ultimoCodop.equals("END"))	//Si no es END el ultimo codop imprimir error
+				System.out.printf("ERROR DE SINTAXIS, EL ULTIMO CODOP DEBE DE SER \"END\"");
+
+		}//FIN if
+				
 		
 		imprimirReglaDireccionamiento();
-
+		
+		
+		if(existeERROR == false){
+			
+			try {
+				//Archivo temporal
+				bwTemp.close();
+				fwTemp.close();
+				pwTemp.close();
+				//Archivo TabSim
+				bw.close();
+				fw.close();
+				pw.close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}//try/catch
+			
+			leerArchivo(auxnomArchivoTemp);
+			leerArchivo(auxnomArchivoTS);
+		}//FIN if
+		
+		
 	}//FIN parsear(String nom)
+
 }//parsear Archivo
